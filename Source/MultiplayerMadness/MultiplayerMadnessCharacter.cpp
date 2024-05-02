@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -66,6 +67,32 @@ void AMultiplayerMadnessCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+	}
+}
+
+void AMultiplayerMadnessCharacter::OpenLobby()
+{
+	UWorld* World = GetWorld();
+	if(World)
+	{
+		// Copy path from map
+		// Type 'Game' to replace the path up to content
+		World->ServerTravel("/Game/ThirdPerson/Maps/Lobby?listen");
+	}
+}
+
+void AMultiplayerMadnessCharacter::CallOpenLevel(const FString& Address)
+{
+	UGameplayStatics::OpenLevel(this, *Address);
+}
+
+void AMultiplayerMadnessCharacter::CallClientTravel(const FString& Address)
+{
+	APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
+
+	if(PlayerController)
+	{
+		PlayerController->ClientTravel(Address, TRAVEL_Absolute);
 	}
 }
 
