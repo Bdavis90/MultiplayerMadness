@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MultiplayerMadnessGameMode.h"
-#include "MultiplayerMadnessCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AMultiplayerMadnessGameMode::AMultiplayerMadnessGameMode()
