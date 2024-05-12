@@ -7,7 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "MovieSceneFwd.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AMMCharacter::AMMCharacter()
@@ -25,7 +25,8 @@ AMMCharacter::AMMCharacter()
 	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
-
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 // Called when the game starts or when spawned
