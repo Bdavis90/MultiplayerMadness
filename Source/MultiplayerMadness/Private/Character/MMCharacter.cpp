@@ -63,14 +63,14 @@ void AMMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	UEnhancedInputComponent* EnhancedInput = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::MovePlayer);
-
 	EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
+	EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 
 }
 
 void AMMCharacter::MovePlayer(const FInputActionValue& Value)
 {
-	const FVector2D Axis = Value.Get<FVector2d>();
+	const FVector2D Axis = Value.Get<FVector2D>();
 
 	const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
 
@@ -85,4 +85,12 @@ void AMMCharacter::MovePlayer(const FInputActionValue& Value)
 		const FVector Direction = MovementRotation.RotateVector(FVector::RightVector);
 		AddMovementInput(Direction, Axis.X);
 	}
+}
+
+void AMMCharacter::Look(const FInputActionValue& Value)
+{
+	const FVector2D Axis = Value.Get<FVector2D>();
+
+	AddControllerPitchInput(Axis.Y);
+	AddControllerYawInput(Axis.X);
 }

@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> MoveAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> LookAction;
+
 
 private:
 
@@ -44,6 +47,7 @@ private:
 	TObjectPtr<class USpringArmComponent> CameraBoom;
 
 	void MovePlayer(const struct FInputActionValue& Value);
+	void Look(const struct FInputActionValue& Value);
 
 public:	
 
