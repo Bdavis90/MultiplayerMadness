@@ -4,6 +4,7 @@
 #include "HUD/OverheadWidget.h"
 
 #include "Components/TextBlock.h"
+#include "GameFramework/PlayerState.h"
 
 void UOverheadWidget::SetDisplayText(FString TextToDisplay)
 {
@@ -17,6 +18,7 @@ void UOverheadWidget::ShowPlayerNetRole(APawn* InPawn)
 {
 	ENetRole RemoteRole = InPawn->GetRemoteRole();
 	FString Role;
+	
 	switch (RemoteRole)
 	{
 	case ROLE_Authority:
@@ -33,7 +35,16 @@ void UOverheadWidget::ShowPlayerNetRole(APawn* InPawn)
 		break;
 	}
 
-	FString RemoteRoleString = FString::Printf(TEXT("Remote Role: %s"), *Role);
+	const APlayerState* PlayerState = InPawn->GetPlayerState();
+	FString PlayerName;
+
+	if(PlayerState)
+	{
+			
+		PlayerName = PlayerState->GetPlayerName();
+	}
+
+	FString RemoteRoleString = FString::Printf(TEXT("Remote Role: %s, %s"), *Role, *PlayerName);
 	SetDisplayText(RemoteRoleString);
 }
 
