@@ -15,11 +15,10 @@ public:
 	// Sets default values for this character's properties
 	AMMCharacter();
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,10 +48,17 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UWidgetComponent> OverheadWidget;
 
+	UPROPERTY(Replicated, ReplicatedUsing=OnRep_OverlappingWeapon)
+	TObjectPtr<class AWeapon> OverlappingWeapon;
+
+	UFUNCTION()
+	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 protected:
 
 	void MovePlayer(const struct FInputActionValue& Value);
 	void Look(const struct FInputActionValue& Value);
 
+public:
 
+	void SetOverlappingWeapon(AWeapon* Weapon);
 };

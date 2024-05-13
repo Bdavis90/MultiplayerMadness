@@ -9,6 +9,8 @@
 #include "EnhancedInputComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Weapon/Weapon.h"
 
 // Sets default values
 AMMCharacter::AMMCharacter()
@@ -73,6 +75,50 @@ void AMMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
+void AMMCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Only replicated on the owning client.
+	DOREPLIFETIME_CONDITION(AMMCharacter, OverlappingWeapon, COND_OwnerOnly);
+	
+}
+
+void AMMCharacter::SetOverlappingWeapon(AWeapon* Weapon)
+{
+	// Locally controlled on the server.
+	if(IsLocallyControlled())
+	{
+		if(OverlappingWeapon)
+		{
+			OverlappingWeapon->ShowPickupWidget(false);
+		}
+	}
+
+	OverlappingWeapon = Weapon;
+	// Locally controlled on the server.
+	if(IsLocallyControlled())
+	{
+		if (OverlappingWeapon)
+		{
+			OverlappingWeapon->ShowPickupWidget(true);
+		}
+	}
+}
+
+void AMMCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
+{
+	if(OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickupWidget(true);
+	}
+
+	if(LastWeapon)
+	{
+		LastWeapon->ShowPickupWidget(false);
+	}
+}
+
 void AMMCharacter::MovePlayer(const FInputActionValue& Value)
 {
 	const FVector2D Axis = Value.Get<FVector2D>();
@@ -99,3 +145,5 @@ void AMMCharacter::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(Axis.Y);
 	AddControllerYawInput(Axis.X);
 }
+
+
