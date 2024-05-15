@@ -164,11 +164,30 @@ void AMMCharacter::Look(const FInputActionValue& Value)
 
 void AMMCharacter::EquipWeapon(const FInputActionValue& Value)
 {
-	// Currently equip only on the server. Will change later
-	if(Combat && HasAuthority())
+	if (Combat)
+	{
+		// Equip on the server
+		if (HasAuthority())
+		{
+			Combat->EquipWeapon(OverlappingWeapon);
+
+		}
+		else
+		{
+			// Equip on the clients
+			ServerEquipWeapon();
+		}
+	}
+}
+
+void AMMCharacter::ServerEquipWeapon_Implementation()
+{
+	// RPC from server to client
+	if(Combat)
 	{
 		Combat->EquipWeapon(OverlappingWeapon);
 	}
+
 }
 
 

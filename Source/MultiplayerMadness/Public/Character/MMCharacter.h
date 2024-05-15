@@ -65,6 +65,8 @@ protected:
 	void MovePlayer(const struct FInputActionValue& Value);
 	void Look(const struct FInputActionValue& Value);
 	void EquipWeapon(const struct FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void ServerEquipWeapon();
 
 public:
 

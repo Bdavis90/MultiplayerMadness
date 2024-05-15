@@ -52,6 +52,6 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 
 	// Set new owner and disable pickup widget
 	EquippedWeapon->SetOwner(Character);
-	EquippedWeapon->ShowPickupWidget(false);
+
 }
 
