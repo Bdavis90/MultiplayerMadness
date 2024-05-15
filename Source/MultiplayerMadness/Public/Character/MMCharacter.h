@@ -18,6 +18,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PostInitializeComponents() override;
 
 
 protected:
@@ -36,6 +37,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> LookAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> EquipAction;
+
 
 private:
 
@@ -53,12 +57,17 @@ private:
 
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UCombatComponent> Combat;
 protected:
 
 	void MovePlayer(const struct FInputActionValue& Value);
 	void Look(const struct FInputActionValue& Value);
+	void EquipWeapon(const struct FInputActionValue& Value);
 
 public:
 
 	void SetOverlappingWeapon(AWeapon* Weapon);
 };
+

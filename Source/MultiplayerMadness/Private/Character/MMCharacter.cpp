@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Components/CombatComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -33,6 +34,10 @@ AMMCharacter::AMMCharacter()
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	OverheadWidget->SetupAttachment(GetRootComponent());
+
+	// Components do not need to be registered for replicated props
+	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	Combat->SetIsReplicated(true);
 }
 
 // Called when the game starts or when spawned
@@ -72,7 +77,18 @@ void AMMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::MovePlayer);
 	EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
 	EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
+	EnhancedInput->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ThisClass::EquipWeapon);
 
+}
+
+void AMMCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if(Combat)
+	{
+		Combat->Character = this;
+	}
 }
 
 void AMMCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -144,6 +160,15 @@ void AMMCharacter::Look(const FInputActionValue& Value)
 
 	AddControllerPitchInput(Axis.Y);
 	AddControllerYawInput(Axis.X);
+}
+
+void AMMCharacter::EquipWeapon(const FInputActionValue& Value)
+{
+	// Currently equip only on the server. Will change later
+	if(Combat && HasAuthority())
+	{
+		Combat->EquipWeapon(OverlappingWeapon);
+	}
 }
 
 
