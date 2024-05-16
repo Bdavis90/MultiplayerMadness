@@ -16,7 +16,7 @@
 // Sets default values
 AMMCharacter::AMMCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -38,6 +38,9 @@ AMMCharacter::AMMCharacter()
 	// Components do not need to be registered for replicated props
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	Combat->SetIsReplicated(true);
+
+	// Allowing our player to use the build in crouch
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 // Called when the game starts or when spawned
@@ -45,17 +48,17 @@ void AMMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(APlayerController* PC = Cast<APlayerController>(Controller))
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
-		if(UEnhancedInputLocalPlayerSubsystem* InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
 		{
-			if(MMMapingContext)
+			if (MMMapingContext)
 			{
 				InputSystem->AddMappingContext(MMMapingContext, 0);
 			}
 		}
 	}
-	
+
 }
 
 
@@ -78,6 +81,7 @@ void AMMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
 	EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	EnhancedInput->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ThisClass::EquipWeapon);
+	EnhancedInput->BindAction(CrouchAction, ETriggerEvent::Started, this, &ThisClass::Crouch);
 
 }
 
@@ -85,7 +89,7 @@ void AMMCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if(Combat)
+	if (Combat)
 	{
 		Combat->Character = this;
 	}
@@ -97,15 +101,15 @@ void AMMCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 	// Only replicated on the owning client.
 	DOREPLIFETIME_CONDITION(AMMCharacter, OverlappingWeapon, COND_OwnerOnly);
-	
+
 }
 
 void AMMCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
 	// Locally controlled on the server.
-	if(IsLocallyControlled())
+	if (IsLocallyControlled())
 	{
-		if(OverlappingWeapon)
+		if (OverlappingWeapon)
 		{
 			OverlappingWeapon->ShowPickupWidget(false);
 		}
@@ -113,7 +117,7 @@ void AMMCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 
 	OverlappingWeapon = Weapon;
 	// Locally controlled on the server.
-	if(IsLocallyControlled())
+	if (IsLocallyControlled())
 	{
 		if (OverlappingWeapon)
 		{
@@ -124,12 +128,12 @@ void AMMCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 
 void AMMCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 {
-	if(OverlappingWeapon)
+	if (OverlappingWeapon)
 	{
 		OverlappingWeapon->ShowPickupWidget(true);
 	}
 
-	if(LastWeapon)
+	if (LastWeapon)
 	{
 		LastWeapon->ShowPickupWidget(false);
 	}
@@ -180,14 +184,31 @@ void AMMCharacter::EquipWeapon(const FInputActionValue& Value)
 	}
 }
 
+void AMMCharacter::Crouch(const FInputActionValue& Value)
+{
+	if(bIsCrouched)
+	{
+		UnCrouch();
+		return;
+	}
+	ACharacter::Crouch();
+}
+
 void AMMCharacter::ServerEquipWeapon_Implementation()
 {
 	// RPC from server to client
-	if(Combat)
+	if (Combat)
 	{
 		Combat->EquipWeapon(OverlappingWeapon);
 	}
 
 }
+
+
+bool AMMCharacter::IsWeaponEquipped()
+{
+	return (Combat && Combat->EquippedWeapon);
+}
+
 
 

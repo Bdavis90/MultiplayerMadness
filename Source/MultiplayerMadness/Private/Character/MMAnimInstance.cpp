@@ -29,6 +29,8 @@ void UMMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Speed = Velocity.Size();
 
 	bIsInAir = MMCharacter->GetCharacterMovement()->IsFalling();
-
 	bIsAccelerating = MMCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f;
+	bWeaponEquipped = MMCharacter->IsWeaponEquipped();
+	bIsCrouched = MMCharacter->bIsCrouched;
+
 }

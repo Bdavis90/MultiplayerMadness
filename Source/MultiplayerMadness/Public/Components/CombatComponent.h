@@ -14,11 +14,10 @@ class MULTIPLAYERMADNESS_API UCombatComponent : public UActorComponent
 
 public:	
 	UCombatComponent();
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	// Doing this is fine because the combat component was made for the character
 	friend class AMMCharacter;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void EquipWeapon(class AWeapon* WeaponToEquip);
 protected:
@@ -26,6 +25,7 @@ protected:
 
 private:
 	TObjectPtr<class AMMCharacter> Character;
+	UPROPERTY(Replicated)
 	TObjectPtr<class AWeapon> EquippedWeapon;
 
 
