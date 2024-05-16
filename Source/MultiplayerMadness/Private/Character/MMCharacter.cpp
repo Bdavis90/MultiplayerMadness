@@ -82,6 +82,8 @@ void AMMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	EnhancedInput->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ThisClass::EquipWeapon);
 	EnhancedInput->BindAction(CrouchAction, ETriggerEvent::Started, this, &ThisClass::Crouch);
+	EnhancedInput->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::Aim);
+	EnhancedInput->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::Aim);
 
 }
 
@@ -186,12 +188,39 @@ void AMMCharacter::EquipWeapon(const FInputActionValue& Value)
 
 void AMMCharacter::Crouch(const FInputActionValue& Value)
 {
-	if(bIsCrouched)
+	if (bIsCrouched)
 	{
 		UnCrouch();
 		return;
 	}
 	ACharacter::Crouch();
+}
+
+void AMMCharacter::Aim(const FInputActionValue& Value)
+{
+	bool Aiming = Value.Get<bool>();
+
+	if (Combat)
+	{
+		if (Aiming)
+		{
+			Combat->SetAiming(true);
+		}
+		else
+		{
+			Combat->SetAiming(false);
+		}
+	}
+}
+
+bool AMMCharacter::IsWeaponEquipped()
+{
+	return (Combat && Combat->EquippedWeapon);
+}
+
+bool AMMCharacter::IsAiming()
+{
+	return (Combat && Combat->bAiming);
 }
 
 void AMMCharacter::ServerEquipWeapon_Implementation()
@@ -204,11 +233,6 @@ void AMMCharacter::ServerEquipWeapon_Implementation()
 
 }
 
-
-bool AMMCharacter::IsWeaponEquipped()
-{
-	return (Combat && Combat->EquippedWeapon);
-}
 
 
 

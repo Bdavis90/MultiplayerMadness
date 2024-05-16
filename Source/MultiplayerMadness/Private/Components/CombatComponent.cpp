@@ -27,7 +27,6 @@ void UCombatComponent::BeginPlay()
 	
 }
 
-
 // Called every frame
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -41,6 +40,7 @@ void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UCombatComponent, EquippedWeapon);
+	DOREPLIFETIME(UCombatComponent, bAiming);
 }
 
 void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
@@ -62,4 +62,19 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 	EquippedWeapon->SetOwner(Character);
 
 }
+
+void UCombatComponent::SetAiming(bool bIsAiming)
+{
+	// Set immediately so client doesn't have to wait for the RPC
+	bAiming = bIsAiming;
+	// Server RPC runs on the server whether you call it from a server or client
+	ServerSetAiming(bIsAiming);
+}
+
+
+void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
+{
+	bAiming = bIsAiming;
+}
+
 

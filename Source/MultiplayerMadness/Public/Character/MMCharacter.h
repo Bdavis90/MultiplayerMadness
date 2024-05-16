@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputAction> CrouchAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
+	TObjectPtr<class UInputAction> AimAction;
+
 
 private:
 
@@ -69,12 +72,15 @@ protected:
 	void Look(const struct FInputActionValue& Value);
 	void EquipWeapon(const struct FInputActionValue& Value);
 	void Crouch(const struct FInputActionValue& Value);
+	void Aim(const struct FInputActionValue& Value);
 	UFUNCTION(Server, Reliable)
 	void ServerEquipWeapon();
+
 
 public:
 
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
+	bool IsAiming();
 };
 
