@@ -41,4 +41,14 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	bool bIsAiming;
+
+	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float YawOffset;
+
+	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float Lean;
+
+	FRotator LastFrameRotation;
+	FRotator CurrentRotation;
+	FRotator DeltaRotation;
 };

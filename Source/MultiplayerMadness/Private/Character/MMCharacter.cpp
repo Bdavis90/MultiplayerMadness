@@ -225,7 +225,7 @@ bool AMMCharacter::IsAiming()
 
 void AMMCharacter::ServerEquipWeapon_Implementation()
 {
-	// RPC from server to client
+	// RPC from client to sever
 	if (Combat)
 	{
 		Combat->EquipWeapon(OverlappingWeapon);

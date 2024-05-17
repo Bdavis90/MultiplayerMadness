@@ -5,6 +5,7 @@
 
 #include "Character/MMCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon.h"
 
@@ -60,6 +61,8 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 
 	// Set new owner and disable pickup widget
 	EquippedWeapon->SetOwner(Character);
+	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+	Character->bUseControllerRotationYaw = true;
 
 }
 
@@ -69,6 +72,15 @@ void UCombatComponent::SetAiming(bool bIsAiming)
 	bAiming = bIsAiming;
 	// Server RPC runs on the server whether you call it from a server or client
 	ServerSetAiming(bIsAiming);
+}
+
+void UCombatComponent::OnRep_EquippedWeapon()
+{
+	if(EquippedWeapon && Character)
+	{
+		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Character->bUseControllerRotationYaw = true;
+	}
 }
 
 
