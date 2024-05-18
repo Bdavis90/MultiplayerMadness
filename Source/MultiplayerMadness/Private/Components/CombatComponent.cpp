@@ -15,7 +15,8 @@ UCombatComponent::UCombatComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
+	BaseWalkSpeed = 600.f;
+	AimWalkSpeed = 450.f;
 }
 
 
@@ -24,7 +25,10 @@ void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	if(Character)
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	}
 	
 }
 
@@ -66,27 +70,35 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 
 }
 
-void UCombatComponent::SetAiming(bool bIsAiming)
-{
-	// Set immediately so client doesn't have to wait for the RPC
-	bAiming = bIsAiming;
-	// Server RPC runs on the server whether you call it from a server or client
-	ServerSetAiming(bIsAiming);
-}
-
 void UCombatComponent::OnRep_EquippedWeapon()
 {
-	if(EquippedWeapon && Character)
+	if (EquippedWeapon && Character)
 	{
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
 	}
 }
 
+void UCombatComponent::SetAiming(bool bIsAiming)
+{
+	// Set immediately so client doesn't have to wait for the RPC
+	bAiming = bIsAiming;
+	// Server RPC runs on the server whether you call it from a server or client
+	ServerSetAiming(bIsAiming);
+	if(Character)
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+	}
+}
 
 void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
 {
 	bAiming = bIsAiming;
+	if (Character)
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+	}
 }
+
 
 
