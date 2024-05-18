@@ -39,7 +39,7 @@ AMMCharacter::AMMCharacter()
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	Combat->SetIsReplicated(true);
 
-	// Allowing our player to use the build in crouch
+	// Allowing our player to use the built-in crouch
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
@@ -78,7 +78,7 @@ void AMMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	UEnhancedInputComponent* EnhancedInput = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::MovePlayer);
-	EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
+	EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::Jump);
 	EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	EnhancedInput->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ThisClass::EquipWeapon);
 	EnhancedInput->BindAction(CrouchAction, ETriggerEvent::Started, this, &ThisClass::Crouch);
