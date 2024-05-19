@@ -136,6 +136,15 @@ void AMMCharacter::AimOffset(float DeltaTime)
 	}
 
 	AimOffsetPitch = GetBaseAimRotation().Pitch;
+
+	if(AimOffsetPitch > 90.f && !IsLocallyControlled())
+	{
+		// Pitch is compressed to a short when sending a packet over the network then decompressed back
+		// Map pitch from [270, 360) to [-90, 0) after it's been decompressed
+		FVector2D InRange(270.f, 360.f);
+		FVector2D OutRange(-90, 0.f);
+		AimOffsetPitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AimOffsetPitch);
+	}
 }
 
 void AMMCharacter::SetOverlappingWeapon(AWeapon* Weapon)
