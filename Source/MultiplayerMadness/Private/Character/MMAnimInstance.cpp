@@ -6,6 +6,8 @@
 #include "Character/MMCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "KismetAnimationLibrary.h"
+
 
 void UMMAnimInstance::NativeInitializeAnimation()
 {
@@ -41,6 +43,8 @@ void UMMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	FRotator DeltaRot = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation);
 	DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRot, DeltaSeconds, 6.f);
 	YawOffset = DeltaRotation.Yaw;
+	//YawOffset = UKismetAnimationLibrary::CalculateDirection(MMCharacter->GetVelocity(), MMCharacter->GetActorRotation());
+
 
 	// Leaning
 	LastFrameRotation = CurrentRotation;
