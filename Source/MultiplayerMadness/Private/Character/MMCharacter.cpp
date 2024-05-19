@@ -11,6 +11,7 @@
 #include "Components/CombatComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon.h"
 
@@ -70,6 +71,7 @@ void AMMCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	AimOffset(DeltaTime);
 }
 
 
@@ -107,6 +109,33 @@ void AMMCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	// Only replicated on the owning client.
 	DOREPLIFETIME_CONDITION(AMMCharacter, OverlappingWeapon, COND_OwnerOnly);
 
+}
+
+void AMMCharacter::AimOffset(float DeltaTime)
+{
+	if (Combat && !Combat->EquippedWeapon) return;
+	FVector Velocity = GetVelocity();
+	Velocity.Z = 0.f;
+	float Speed = Velocity.Size();
+	bool bIsInAir = GetCharacterMovement()->IsFalling();
+
+	if(Speed == 0.f && !bIsInAir) // Not moving and not jumping
+	{
+		FRotator CurrentAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
+
+		AimOffsetYaw = DeltaAimRotation.Yaw;
+		bUseControllerRotationYaw = false;
+	}
+
+	if(Speed > 0.f || bIsInAir) // Running or jumping
+	{
+		StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		AimOffsetYaw = 0.f;
+		bUseControllerRotationYaw = true;
+	}
+
+	AimOffsetPitch = GetBaseAimRotation().Pitch;
 }
 
 void AMMCharacter::SetOverlappingWeapon(AWeapon* Weapon)

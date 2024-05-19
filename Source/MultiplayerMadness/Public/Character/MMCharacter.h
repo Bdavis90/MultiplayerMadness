@@ -66,6 +66,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UCombatComponent> Combat;
+
+	float AimOffsetYaw;
+	float AimOffsetPitch;
+	FRotator StartingAimRotation;
+
 protected:
 
 	void MovePlayer(const struct FInputActionValue& Value);
@@ -76,11 +81,15 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerEquipWeapon();
 
+	void AimOffset(float DeltaTime);
+
 
 public:
 
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
 	bool IsAiming();
+	FORCEINLINE float GetAimOffsetYaw() const { return AimOffsetYaw; }
+	FORCEINLINE float GetAimOffsetPitch() const { return AimOffsetPitch; }
 };
 
