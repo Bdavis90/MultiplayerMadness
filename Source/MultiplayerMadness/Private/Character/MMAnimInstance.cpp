@@ -6,7 +6,7 @@
 #include "Character/MMCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "KismetAnimationLibrary.h"
+#include "Weapon/Weapon.h"
 
 
 void UMMAnimInstance::NativeInitializeAnimation()
@@ -34,6 +34,7 @@ void UMMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsInAir = MMCharacter->GetCharacterMovement()->IsFalling();
 	bIsAccelerating = MMCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f;
 	bWeaponEquipped = MMCharacter->IsWeaponEquipped();
+	EquippedWeapon = MMCharacter->GetEquppedWeapon();
 	bIsCrouched = MMCharacter->bIsCrouched;
 	bIsAiming = MMCharacter->IsAiming();
 
@@ -56,5 +57,16 @@ void UMMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	AimOffsetYaw = MMCharacter->GetAimOffsetYaw();
 	AimOffsetPitch = MMCharacter->GetAimOffsetPitch();
+
+	// Using FABRIK to place the character's left hand on the weapon.
+	if(bWeaponEquipped && EquippedWeapon && EquippedWeapon->GetWeaponMesh() && MMCharacter->GetMesh())
+	{
+		LeftHandTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"));
+		FVector OutPosition;
+		FRotator OutRotation;
+		MMCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
+		LeftHandTransform.SetLocation(OutPosition);
+		LeftHandTransform.SetRotation(FQuat(OutRotation));
+	}
 
 }

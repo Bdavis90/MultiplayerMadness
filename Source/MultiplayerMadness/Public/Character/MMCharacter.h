@@ -91,5 +91,6 @@ public:
 	bool IsAiming();
 	FORCEINLINE float GetAimOffsetYaw() const { return AimOffsetYaw; }
 	FORCEINLINE float GetAimOffsetPitch() const { return AimOffsetPitch; }
+	AWeapon* GetEquppedWeapon();
 };
 

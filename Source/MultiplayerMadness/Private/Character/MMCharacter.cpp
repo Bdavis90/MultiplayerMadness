@@ -264,6 +264,13 @@ bool AMMCharacter::IsAiming()
 	return (Combat && Combat->bAiming);
 }
 
+AWeapon* AMMCharacter::GetEquppedWeapon()
+{
+	if (!Combat) return nullptr;
+
+	return Combat->EquippedWeapon;
+}
+
 void AMMCharacter::ServerEquipWeapon_Implementation()
 {
 	// RPC from client to sever
