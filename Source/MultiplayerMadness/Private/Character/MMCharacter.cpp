@@ -45,6 +45,8 @@ AMMCharacter::AMMCharacter()
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+
+	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 }
 
 // Called when the game starts or when spawned
@@ -126,6 +128,7 @@ void AMMCharacter::AimOffset(float DeltaTime)
 
 		AimOffsetYaw = DeltaAimRotation.Yaw;
 		bUseControllerRotationYaw = false;
+		TurnInPlace(DeltaTime);
 	}
 
 	if(Speed > 0.f || bIsInAir) // Running or jumping
@@ -133,6 +136,7 @@ void AMMCharacter::AimOffset(float DeltaTime)
 		StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		AimOffsetYaw = 0.f;
 		bUseControllerRotationYaw = true;
+		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	}
 
 	AimOffsetPitch = GetBaseAimRotation().Pitch;
@@ -144,6 +148,17 @@ void AMMCharacter::AimOffset(float DeltaTime)
 		FVector2D InRange(270.f, 360.f);
 		FVector2D OutRange(-90, 0.f);
 		AimOffsetPitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AimOffsetPitch);
+	}
+}
+
+void AMMCharacter::TurnInPlace(float DeltaTime)
+{
+	if(AimOffsetYaw > 90.f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Right;
+	} else if (AimOffsetYaw < -90.f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Left;
 	}
 }
 

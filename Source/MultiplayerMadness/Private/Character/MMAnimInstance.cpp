@@ -37,6 +37,7 @@ void UMMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	EquippedWeapon = MMCharacter->GetEquppedWeapon();
 	bIsCrouched = MMCharacter->bIsCrouched;
 	bIsAiming = MMCharacter->IsAiming();
+	TurningInPlace = MMCharacter->GetTurningInPlace();
 
 	// Offset Yaw for Strafing
 	FRotator AimRotation = MMCharacter->GetBaseAimRotation();

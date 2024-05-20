@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "../MMTypes/TurningInPlace.h"
 #include "MMAnimInstance.generated.h"
 
 class AMMCharacter;
@@ -62,4 +63,7 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	FTransform LeftHandTransform;
+
+	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	ETurningInPlace TurningInPlace;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "../MMTypes/TurningInPlace.h"
 #include "MMCharacter.generated.h"
 
 UCLASS()
@@ -71,6 +72,9 @@ private:
 	float AimOffsetPitch;
 	FRotator StartingAimRotation;
 
+	ETurningInPlace TurningInPlace;
+	void TurnInPlace(float DeltaTime);
+
 protected:
 
 	void MovePlayer(const struct FInputActionValue& Value);
@@ -92,5 +96,6 @@ public:
 	FORCEINLINE float GetAimOffsetYaw() const { return AimOffsetYaw; }
 	FORCEINLINE float GetAimOffsetPitch() const { return AimOffsetPitch; }
 	AWeapon* GetEquppedWeapon();
+	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
 };
 
