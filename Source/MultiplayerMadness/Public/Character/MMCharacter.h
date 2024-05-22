@@ -70,6 +70,7 @@ private:
 
 	float AimOffsetYaw;
 	float AimOffsetPitch;
+	float InterpAimOffsetYaw;
 	FRotator StartingAimRotation;
 
 	ETurningInPlace TurningInPlace;
